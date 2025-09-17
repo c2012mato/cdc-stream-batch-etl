@@ -371,6 +371,32 @@ services:
     networks:
       - etl-network
 
+  # AKHQ - Kafka UI for monitoring Kafka, Zookeeper and Debezium
+  akhq:
+    image: tchiotludo/akhq:0.24.0
+    hostname: akhq
+    container_name: akhq
+    depends_on:
+      - kafka
+      - zookeeper
+      - debezium
+    ports:
+      - "8084:8080"
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "kafka:29092"
+              connect:
+                - name: "debezium"
+                  url: "http://debezium:8083"
+    volumes:
+      - ./monitoring/application.yml:/app/application.yml:ro
+    networks:
+      - etl-network
+
 volumes:
   postgres_data:
   redis_data:

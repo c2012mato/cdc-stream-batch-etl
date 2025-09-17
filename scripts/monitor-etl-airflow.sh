@@ -34,6 +34,16 @@ else
 fi
 
 echo ""
+echo "=== Monitoring UIs ==="
+
+# Check AKHQ
+if curl -s -o /dev/null -w "%{http_code}" http://localhost:8084 | grep -q "200"; then
+    echo "✓ AKHQ (Kafka UI): Running (http://localhost:8084)"
+else
+    echo "✗ AKHQ (Kafka UI): Not accessible"
+fi
+
+echo ""
 echo "=== DAG Status ==="
 if command -v curl &> /dev/null && curl -s http://localhost:8080/health &> /dev/null; then
     # Try to get DAG status via API (basic auth needed)
@@ -149,6 +159,8 @@ echo ""
 echo "=== Quick Actions ==="
 echo "• View Airflow UI: http://localhost:8080 (admin/admin)"
 echo "• View Airflow API: http://localhost:8081/api/v1/health"
+echo "• View AKHQ (Kafka UI): http://localhost:8084"
+echo "• Check Debezium Connectors: http://localhost:8083/connectors"
 echo "• Restart Airflow services: docker compose restart airflow-webserver airflow-scheduler"
 echo "• Check all logs: docker compose logs -f"
 echo "• Stop system: docker compose down"
@@ -159,7 +171,7 @@ echo "=== System Health Summary ==="
 
 # Count healthy services
 HEALTHY_COUNT=0
-TOTAL_COUNT=8
+TOTAL_COUNT=9  # Increased to include AKHQ
 
 # Check each critical service
 if docker exec postgres pg_isready -U postgres &> /dev/null; then ((HEALTHY_COUNT++)); fi
@@ -168,6 +180,8 @@ if docker exec kafka kafka-topics --bootstrap-server localhost:9092 --list &> /d
 if docker exec redis redis-cli --no-auth-warning -a redis123 ping 2>/dev/null | grep -q PONG; then ((HEALTHY_COUNT++)); fi
 if curl -s http://localhost:8083/connectors &> /dev/null; then ((HEALTHY_COUNT++)); fi
 if curl -s http://localhost:8080/health &> /dev/null; then ((HEALTHY_COUNT++)); fi
+if curl -s http://localhost:8081/api/v1/health &> /dev/null; then ((HEALTHY_COUNT++)); fi
+if curl -s -o /dev/null -w "%{http_code}" http://localhost:8084 | grep -q "200"; then ((HEALTHY_COUNT++)); fi
 if [ "$(docker inspect airflow-scheduler --format='{{.State.Status}}' 2>/dev/null)" = "running" ]; then ((HEALTHY_COUNT++)); fi
 if [ "$(docker inspect cdc-processor --format='{{.State.Status}}' 2>/dev/null)" = "running" ]; then ((HEALTHY_COUNT++)); fi
 

@@ -1,0 +1,34 @@
+akhq:
+  connections:
+    docker-kafka-server:
+      properties:
+        bootstrap.servers: "kafka:29092"
+      connect:
+        - name: "debezium"
+          url: "http://debezium:8083"
+  
+  # Security configuration (basic setup for development)
+  security:
+    default-group: reader
+    
+  # UI Configuration
+  ui-options:
+    topic:
+      default-view: ALL
+      skip-consumer-groups: false
+      skip-last-record: false
+    topic-data:
+      sort: OLDEST
+      date-time-format: ISO
+
+  # Pagination settings
+  pagination:
+    page-size: 25
+    threads: 16
+
+  # Additional monitoring features
+  monitoring:
+    metrics:
+      - name: "kafka-lag"
+        url: "http://kafka:9997"
+        type: "jmx"
