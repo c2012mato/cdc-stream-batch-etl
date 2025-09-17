@@ -195,3 +195,10 @@ Thumbs.db
 # Docker volumes (if using bind mounts)
 postgres_data/
 redis_data/
+airflow_db_data/
+
+# Airflow specific
+airflow/logs/*
+!airflow/logs/.gitkeep
+airflow/__pycache__/
+airflow/**/__pycache__/

@@ -1,0 +1,2 @@
+# Placeholder file to ensure logs directory is tracked by git
+# Actual log files should be ignored by .gitignore
