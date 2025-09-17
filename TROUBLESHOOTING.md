@@ -108,6 +108,23 @@ curl http://localhost:8083/connectors/postgres-source-connector/status
 **Solutions**:
 - Check task logs in Airflow UI: http://localhost:8080
 - Verify ETL module imports: `docker exec airflow-scheduler python -c "import sys; sys.path.append('/opt/airflow/etl_modules'); import config"`
+
+### 8. AKHQ Monitoring Issues
+
+**Problem**: AKHQ not accessible or showing errors
+
+**Solutions**:
+- Check AKHQ container status: `docker compose logs akhq`
+- Verify Kafka connectivity: `docker exec akhq wget -q --spider http://kafka:29092`
+- Restart AKHQ: `docker compose restart akhq`
+- Check configuration: `cat monitoring/application.yml`
+
+**Problem**: AKHQ not showing Kafka topics or data
+
+**Solutions**:
+- Verify Kafka topics exist: `docker exec kafka kafka-topics --bootstrap-server localhost:9092 --list`
+- Check Kafka consumer groups: `docker exec kafka kafka-consumer-groups --bootstrap-server localhost:9092 --list`
+- Verify Debezium connector status: `curl http://localhost:8083/connectors`
 - Check asset dependencies and ensure upstream tasks complete
 - Verify environment variables are passed to tasks
 

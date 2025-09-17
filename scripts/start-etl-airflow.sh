@@ -25,7 +25,7 @@ if [ "$MEMORY_GB" -lt 4 ]; then
 fi
 
 # Check required ports
-REQUIRED_PORTS=(5432 6379 8083 9092 2181 8080 8081)
+REQUIRED_PORTS=(5432 6379 8083 8084 9092 2181 8080 8081)
 for port in "${REQUIRED_PORTS[@]}"; do
     if netstat -tuln | grep ":$port " > /dev/null; then
         echo "Warning: Port $port is already in use"
@@ -136,12 +136,20 @@ else
     echo "✓ Debezium is running with connectors"
 fi
 
+# Check AKHQ
+if curl -s -o /dev/null -w "%{http_code}" http://localhost:8084 | grep -q "200"; then
+    echo "✓ AKHQ (Kafka UI) is running"
+else
+    echo "✗ AKHQ (Kafka UI) is not healthy"
+fi
+
 echo ""
 echo "=== Next Steps ==="
 echo "1. Access Airflow UI at http://localhost:8080 (admin/admin)"
-echo "2. Enable the DAGs: 'cdc_stream_batch_etl_orchestration' and 'etl_system_monitoring'"
-echo "3. Monitor system status: ./scripts/monitor-etl-airflow.sh"
-echo "4. Check logs: docker compose logs -f [service-name]"
+echo "2. Access AKHQ (Kafka UI) at http://localhost:8084"
+echo "3. Enable the DAGs: 'cdc_stream_batch_etl_orchestration' and 'etl_system_monitoring'"
+echo "4. Monitor system status: ./scripts/monitor-etl-airflow.sh"
+echo "5. Check logs: docker compose logs -f [service-name]"
 
 echo ""
 echo "=== ETL System with Airflow is now running! ==="

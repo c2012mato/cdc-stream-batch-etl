@@ -29,7 +29,7 @@ This project implements a complete data pipeline with the following components:
 ### Prerequisites
 - Docker and Docker Compose installed
 - At least 6GB RAM available for containers (increased for Airflow)
-- Ports 5432, 6379, 8080, 8081, 8083, 9092, 2181 available
+- Ports 5432, 6379, 8080, 8081, 8083, 8084, 9092, 2181 available
 
 ### 1. Clone and Setup
 ```bash
@@ -56,7 +56,7 @@ sleep 60
 ./scripts/setup-debezium.sh
 ```
 
-### 3. Access Airflow UI
+### 3. Access UIs
 ```bash
 # Airflow Web UI (after starting with Airflow)
 http://localhost:8080
@@ -64,6 +64,10 @@ http://localhost:8080
 
 # Airflow API Server
 http://localhost:8081
+
+# AKHQ - Kafka/Zookeeper/Debezium Monitoring UI
+http://localhost:8084
+# Features: Topic browsing, consumer groups, connector status
 ```
 
 ### 4. Monitor the System
@@ -112,6 +116,14 @@ Continuously generates mock e-commerce data:
 - Anomaly detection (high-value orders, bulk transactions)
 - Geographic distribution analysis
 - Real-time alerting system
+
+### AKHQ - Monitoring UI
+Modern web UI for comprehensive Kafka ecosystem monitoring:
+- **Kafka Topics**: Browse topics, partitions, and message content
+- **Consumer Groups**: Monitor lag, offsets, and consumer health
+- **Kafka Connect**: View and manage Debezium connectors
+- **Zookeeper**: Monitor cluster coordination and configuration
+- **Real-time Data**: Live streaming of Kafka messages and metrics
 
 ## 🔗 Airflow 3.0 Orchestration Features
 
