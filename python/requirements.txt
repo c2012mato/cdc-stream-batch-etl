@@ -1,0 +1,10 @@
+kafka-python==2.0.2
+psycopg2-binary==2.9.7
+redis==4.6.0
+faker==19.6.2
+python-dotenv==1.0.0
+pydantic==2.4.2
+asyncio==3.4.3
+pandas==2.1.1
+sqlalchemy==2.0.21
+requests==2.31.0
