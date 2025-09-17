@@ -84,9 +84,66 @@ curl http://localhost:8083/connectors/postgres-source-connector/status
 - Check service names resolve: `docker compose exec cdc-processor nslookup postgres`
 - Use internal service names (not localhost) in configuration
 
+### 7. Airflow Issues
+
+**Problem**: Airflow services fail to start or are unhealthy
+
+**Solutions**:
+- Check Airflow database connectivity: `docker exec airflow-db pg_isready -U airflow`
+- Verify Airflow initialization: `docker compose logs airflow-init`
+- Check Airflow webserver: `curl http://localhost:8080/health`
+- Restart Airflow services: `docker compose restart airflow-webserver airflow-scheduler airflow-api`
+- Clear Airflow metadata: `docker exec airflow-webserver airflow db reset`
+
+**Problem**: DAGs not appearing or failing
+
+**Solutions**:
+- Check DAG syntax: `docker exec airflow-scheduler airflow dags list`
+- Verify DAG files are mounted: `docker exec airflow-scheduler ls /opt/airflow/dags`
+- Check DAG import errors: `docker exec airflow-scheduler airflow dags list-import-errors`
+- Enable DAGs via UI: http://localhost:8080
+
+**Problem**: Tasks failing in Airflow
+
+**Solutions**:
+- Check task logs in Airflow UI: http://localhost:8080
+- Verify ETL module imports: `docker exec airflow-scheduler python -c "import sys; sys.path.append('/opt/airflow/etl_modules'); import config"`
+- Check asset dependencies and ensure upstream tasks complete
+- Verify environment variables are passed to tasks
+
 ## Debugging Commands
 
 ### Check Service Health
+```bash
+# Traditional monitoring
+./scripts/monitor-etl.sh
+
+# Airflow-enhanced monitoring  
+./scripts/monitor-etl-airflow.sh
+
+# Check specific services
+docker compose ps
+docker compose logs [service-name]
+```
+
+### Airflow-Specific Debugging
+```bash
+# Check Airflow services
+curl http://localhost:8080/health
+curl http://localhost:8081/api/v1/health
+
+# List DAGs and their status
+docker exec airflow-scheduler airflow dags list
+
+# Check DAG import errors
+docker exec airflow-scheduler airflow dags list-import-errors
+
+# Test DAG syntax
+docker exec airflow-scheduler airflow dags check [dag_id]
+
+# Manually trigger DAG
+docker exec airflow-scheduler airflow dags trigger [dag_id]
+```
 ```bash
 # All services status
 docker compose ps
